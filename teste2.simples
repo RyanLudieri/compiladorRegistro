@@ -1,0 +1,10 @@
+programa teste2
+
+inteiro a
+
+inicio
+
+leia a
+escreva a
+
+fimprograma

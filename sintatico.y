@@ -1,4 +1,5 @@
 %{
+
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
@@ -7,7 +8,13 @@
     #include "utils.c"
     int contaVar = 0;
     int rotulo = 0;
+    int ehRegistro = 0;
     int tipo;
+    int tam; // tamanho da estrutura qdo percorre expressão de acesso
+    int des; // deslocamento para chegar no campo
+    int pos; // posicao do tipo na tabela de simbolos
+    int indice;
+    ptno *campos;
 %}
 
 %token T_PROGRAMA
@@ -41,6 +48,10 @@
 %token T_FECHA
 %token T_LOGICO
 %token T_INTEIRO
+%token T_DEF 
+%token T_FIMDEF
+%token T_REGISTRO
+%token T_IDPONTO
 
 %start programa
 
@@ -53,7 +64,7 @@
 %%
 
 programa
-    : cabecalho variaveis 
+    : cabecalho definicao_registro variaveis 
         {
             mostraTab();
             empilha(contaVar);
@@ -74,6 +85,23 @@ cabecalho
         {fprintf(yyout, "\tINPP\n");}
     ;
 
+tipo
+    : T_LOGICO
+        {
+            tipo = LOG;
+            
+        }
+    |T_INTEIRO
+        {
+            tipo = INT;
+            
+        }
+    |T_REGISTRO T_IDENTIF
+        {
+            tipo = REG;/
+        }
+    ;
+
 variaveis
     : /*vazio*/
     | declaracao_variaveis
@@ -84,13 +112,6 @@ declaracao_variaveis
     | tipo lista_variaveis
     ;
 
-tipo
-    : T_LOGICO
-        {tipo = LOG;}
-    |T_INTEIRO
-        {tipo = INT;}
-    ;
-
 lista_variaveis
     : lista_variaveis
     T_IDENTIF 
@@ -98,17 +119,63 @@ lista_variaveis
             strcpy(elemTab.id, atomo);
             elemTab.end = contaVar;
             elemTab.tip = tipo;
+            elemTab.tam = tam;
+            elemTab.pos = pos;
             insereSimbolo(elemTab);
-            contaVar++;
+            if(elemTab.tip == REG){
+                contaVar = contaVar + tam;
+            }
+            else{
+                contaVar++;
+            }
         }
     | T_IDENTIF
         {
             strcpy(elemTab.id, atomo);
             elemTab.end = contaVar;
             elemTab.tip = tipo;
+            elemTab.tam = tam;
+            elemTab.pos = pos;
+            insereSimbolo(elemTab);
+            if(elemTab.tip == REG){
+                contaVar = contaVar + tam;
+            }
+            else{
+                contaVar++;
+            }
+        }
+    ;
+
+
+definicao_registro
+    : /*vazio*/
+    | define definicao_registro
+    ;
+
+define
+    : T_DEF
+          {
+            campos = NULL;
+          }
+     definicao_campos T_FIMDEF T_IDENTIF
+         {
+            strcpy(elemTab.id, atomo);
+            elemTab.tip = REG;
+            elemTab.end = -1;
+            campos = elemTab.campo;
             insereSimbolo(elemTab);
             contaVar++;
-        }
+         }
+    ;
+
+definicao_campos
+    : tipo lista_campos definicao_campos
+    | tipo lista_campos
+    ;
+
+lista_campos
+    : lista_campos T_IDENTIF
+    | T_IDENTIF
     ;
 
 lista_comandos
@@ -227,16 +294,32 @@ expressao
     | termo
     ;
 
-termo
+expressao_acesso
     : T_IDENTIF
-        {
+        {   
+            if(ehRegistro) {
+                empilha(REG);
+            }
+            else {
             int pos = buscaSimbolo(atomo);
             fprintf(yyout, "\tCRVG\t%d\n", tabSimb[pos].end);
             empilha(tabSimb[pos].tip);
+            }
+            ehRegistro = 0; // Para sinalizar que não é registro
         }
+    | T_IDPONTO
+        {
+            if (!ehRegistro)
+                ehRegistro = 1;
+        }
+        expressao_acesso
+    ;
+    
+termo 
+    : expressao_acesso
     | T_NUMERO
         {
-            fprintf(yyout, "\tCRCT\t%s\n\n", atomo);
+            fprintf(yyout, "\tCRCT\t%s\n", atomo);
             empilha(INT);
         }
         
@@ -260,6 +343,7 @@ termo
         }
     | T_ABRE expressao T_FECHA
     ;
+
 
 %%
 int main (int argc, char *argv[]) {

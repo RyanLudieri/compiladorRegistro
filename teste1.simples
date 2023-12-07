@@ -1,12 +1,18 @@
 programa teste1
+    
+    def
+        inteiro a 
+        logico b  
+    fimdef c
+
+    def
+        inteiro d 
+        registro c k
+    fimdef g
+
     inteiro a  
-    logico b
+    registro g y 
+
 inicio
-    b <- V
-    leia a
-    enquanto b faca
-        escreva a
-        a <- a + 1
-        b <- a < 10
-    fimenquanto
+    escreva y.k.a
 fimprograma
