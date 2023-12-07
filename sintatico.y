@@ -14,7 +14,7 @@
     int des; // deslocamento para chegar no campo
     int pos; // posicao do tipo na tabela de simbolos
     int indice;
-    ptno *campos;
+    ptno campos;
 %}
 
 %token T_PROGRAMA
@@ -98,7 +98,7 @@ tipo
         }
     |T_REGISTRO T_IDENTIF
         {
-            tipo = REG;/
+            tipo = REG;
         }
     ;
 

@@ -69,15 +69,15 @@ struct elemTabSimbolos{
     int tip;      // tipo
     int tam;      // tam
     int pos;      // pos
-    ptno *campo;   // campos
+    ptno campo;   // campos
 }tabSimb[TAM_TAB], elemTab;
 
 int posTab = 0; // indica a proxima posicao livre para inserir
 
 int buscaSimbolo(char * s){
     int i;
-    for (i = posTab - 1; strcmp(tabSimb[i].id, s) && i >= 0; i--)
-    ;
+    for (i = posTab - 1; 
+    strcmp(tabSimb[i].id, s) && i >= 0; i--);
     if(i == -1){
         char msg[200];
         sprintf(msg, "Identificador [%s] não encontrado", s);
@@ -118,7 +118,7 @@ void mostraTab(){
              tabSimb[i].pos
              );
 
-        mostra(*tabSimb[i].campo);
+        mostra(tabSimb[i].campo);
     }
     puts("");
 }

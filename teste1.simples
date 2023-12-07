@@ -1,18 +1,17 @@
-programa teste1
-    
-    def
-        inteiro a 
-        logico b  
-    fimdef c
+programa registro1
+def
+    inteiro a
+    logico b
+fimdef c
 
-    def
-        inteiro d 
-        registro c k
-    fimdef g
+def 
+    registro c x
+    logico y
+fimdef d 
 
-    inteiro a  
-    registro g y 
+inteiro x
+registro d y
+logico z
 
 inicio
-    escreva y.k.a
 fimprograma
