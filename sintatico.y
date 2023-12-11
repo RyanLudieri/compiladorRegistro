@@ -14,7 +14,7 @@
     int des = 0; // deslocamento para chegar no campo
     int pos; // posicao do tipo na tabela de simbolos
     int indice;
-    ptno campos;
+    ptno campos = NULL;
 %}
 
 %token T_PROGRAMA
@@ -82,7 +82,27 @@ programa
 
 cabecalho
     : T_PROGRAMA T_IDENTIF
-        {fprintf(yyout, "\tINPP\n");}
+        {
+            fprintf(yyout, "\tINPP\n");
+
+            strcpy(elemTab.id, "inteiro"); // Copia o conteudo de uma string para outra
+            elemTab.tip = INT; 
+            elemTab.end = -1;
+            elemTab.tam = 1;
+            elemTab.pos = pos;
+            //elemTab.campo = campos;
+            insereSimbolo(elemTab); // Insere símbolo na tabela de símbolos
+            pos++;
+
+            strcpy(elemTab.id, "logico"); // Copia o conteudo de uma string para outra
+            elemTab.tip = LOG; 
+            elemTab.end = -1;
+            elemTab.tam = 1;
+            elemTab.pos = pos;
+            //elemTab.campo = campos;
+            insereSimbolo(elemTab); // Insere símbolo na tabela de símbolos
+            pos++;
+        }
     ;
 
 tipo
@@ -91,14 +111,15 @@ tipo
             tipo = LOG;
             tam = 1;
             pos = buscaSimbolo("logico");
-
+            elemTab.campo = NULL;
             
         }
     |T_INTEIRO
         {
             tipo = INT;
             tam = 1;
-            pos = buscaSimbolo("inteiro");;
+            pos = buscaSimbolo("inteiro");
+            elemTab.campo = NULL;
             
         }
     |T_REGISTRO T_IDENTIF
@@ -106,6 +127,8 @@ tipo
             tipo = REG;
             pos = buscaSimbolo(atomo);
             tam = tabSimb[pos].tam;
+            elemTab.campo = campos;
+            campos = NULL;
         }
     ;
 
@@ -117,38 +140,24 @@ definicao_registro
 define
     : T_DEF
           {
-            strcpy(elemTab.id, "inteiro"); // Copia o conteudo de uma string para outra
-            elemTab.tip = INT; 
-            elemTab.end = -1;
-            elemTab.tam = 1;
-            elemTab.pos = pos;
             elemTab.campo = campos;
-            insereSimbolo(elemTab); // Insere símbolo na tabela de símbolos
-            contaVar++;
-            pos++;
-
-            strcpy(elemTab.id, "logico"); // Copia o conteudo de uma string para outra
-            elemTab.tip = LOG; 
-            elemTab.end = -1;
-            elemTab.tam = 1;
-            elemTab.pos = pos;
-            elemTab.campo = campos;
-            insereSimbolo(elemTab); // Insere símbolo na tabela de símbolos
-            contaVar++;
-            pos++;
           }
      definicao_campos T_FIMDEF T_IDENTIF
          {
             //pos = 2;
+
             strcpy(elemTab.id, atomo); // Copia o conteudo de uma string para outra
             elemTab.tip = REG; 
             elemTab.end = -1;
-            elemTab.tam = tam;
-            elemTab.pos = pos;
+
+            // Aqui ficava o problema do tamanho
+            elemTab.tam = tabSimb[pos].tam;
+            elemTab.tam = elemTab.tam + campos->tam;
+            elemTab.pos++; // + tam
+            //elemTab.campo = insereCampo(campos,atomo,tipo,pos,des,tam);
             elemTab.campo = campos;
             insereSimbolo(elemTab); // Insere símbolo na tabela de símbolos
-            contaVar++;
-            pos++;
+            //pos++;
             
          }
     ;
@@ -161,15 +170,19 @@ definicao_campos
 lista_campos
     : lista_campos T_IDENTIF
         {
-            insereCampo(campos,atomo,tipo,pos,des,tam);
+            
+            campos = insereCampo(campos,atomo,tipo,pos,des,tam);
+            //des = campos->desl + tam;
             des = des + tam;
-            tam++;
+            //tam++;
+            
         }
     | T_IDENTIF
         {
-            insereCampo(campos,atomo,tipo,pos,des,tam);
+            campos = insereCampo(campos,atomo,tipo,pos,des,tam);
             des = des + tam;
-            tam++;  
+            //des = campos->desl + tam;
+            //tam++;  
         }
     ;
 

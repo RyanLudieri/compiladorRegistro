@@ -8,5 +8,6 @@ programa registro9
     inteiro b
     registro c x y
 inicio
-    
+    leia a 
+    leia b
 fimprograma
