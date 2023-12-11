@@ -1,17 +1,12 @@
-programa registro1
-def
+programa registro9
+    def
+        inteiro a
+        inteiro b
+    fimdef c
+    
     inteiro a
-    logico b
-fimdef c
-
-def 
-    registro c x
-    logico y
-fimdef d 
-
-inteiro x
-registro d y
-logico z
-
+    inteiro b
+    registro c x y
 inicio
+    
 fimprograma

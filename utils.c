@@ -16,7 +16,7 @@ char nomeTipo[3][4] = { "INT", "LOG", "REG"};
 
 typedef struct no *ptno;
 struct no {
-    char nome;
+    char nome[100];
     int tipo;
     int pos;
     int desl;
@@ -24,10 +24,11 @@ struct no {
     ptno prox;
 };
 
-ptno insere(ptno L, char nome, int tipo, int pos, int desl, int tam){
+ptno insereCampo(ptno L, char nome[100], int tipo, int pos, int desl, int tam){
     ptno p, new;
     new = (ptno)malloc(sizeof(struct no));
-    new->nome = nome;
+    //new->nome = nome;
+    strcpy(new->nome,nome);
     new->tipo = tipo;
     new->pos = pos;
     new->desl = desl;
@@ -43,21 +44,20 @@ ptno insere(ptno L, char nome, int tipo, int pos, int desl, int tam){
     return L;
     
 }
-
-ptno busca(ptno L, char nome) {
-    
-    while (L && L->nome != nome){
+ptno busca(ptno L, char *nome) {
+    while (L && strcmp(L->nome, nome) != 0) {
         L = L->prox;
     }
     return L;
 }
 
-void mostra(ptno L){
+void mostra(ptno L) {
     while (L) {
-        if(L->prox)
-            printf("  (%c,%s,%d,%d,%d)=>", L->nome,nomeTipo[L->tipo], L->pos, L->desl,L->tam);
-        else
-            printf("  (%c,%s,%d,%d,%d)", L->nome, nomeTipo[L->tipo], L->pos, L->desl,L->tam);
+        if (L->prox) {
+            printf("  (%s,%s,%d,%d,%d)=>", L->nome, nomeTipo[L->tipo], L->pos, L->desl, L->tam);
+        } else {
+            printf("  (%s,%s,%d,%d,%d)", L->nome, nomeTipo[L->tipo], L->pos, L->desl, L->tam);
+        }
         L = L->prox;
     }
 }
@@ -77,7 +77,7 @@ int posTab = 0; // indica a proxima posicao livre para inserir
 int buscaSimbolo(char * s){
     int i;
     for (i = posTab - 1; 
-    strcmp(tabSimb[i].id, s) && i >= 0; i--);
+    strcmp(tabSimb[i].id, s) && i >= 0; i--); //strcmp - Compara duas strings
     if(i == -1){
         char msg[200];
         sprintf(msg, "Identificador [%s] não encontrado", s);

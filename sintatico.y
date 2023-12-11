@@ -11,7 +11,7 @@
     int ehRegistro = 0;
     int tipo;
     int tam; // tamanho da estrutura qdo percorre expressão de acesso
-    int des; // deslocamento para chegar no campo
+    int des = 0; // deslocamento para chegar no campo
     int pos; // posicao do tipo na tabela de simbolos
     int indice;
     ptno campos;
@@ -89,16 +89,87 @@ tipo
     : T_LOGICO
         {
             tipo = LOG;
+            tam = 1;
+            pos = buscaSimbolo("logico");
+
             
         }
     |T_INTEIRO
         {
             tipo = INT;
+            tam = 1;
+            pos = buscaSimbolo("inteiro");;
             
         }
     |T_REGISTRO T_IDENTIF
         {
             tipo = REG;
+            pos = buscaSimbolo(atomo);
+            tam = tabSimb[pos].tam;
+        }
+    ;
+
+definicao_registro
+    : /*vazio*/
+    | define definicao_registro
+    ;
+
+define
+    : T_DEF
+          {
+            strcpy(elemTab.id, "inteiro"); // Copia o conteudo de uma string para outra
+            elemTab.tip = INT; 
+            elemTab.end = -1;
+            elemTab.tam = 1;
+            elemTab.pos = pos;
+            elemTab.campo = campos;
+            insereSimbolo(elemTab); // Insere símbolo na tabela de símbolos
+            contaVar++;
+            pos++;
+
+            strcpy(elemTab.id, "logico"); // Copia o conteudo de uma string para outra
+            elemTab.tip = LOG; 
+            elemTab.end = -1;
+            elemTab.tam = 1;
+            elemTab.pos = pos;
+            elemTab.campo = campos;
+            insereSimbolo(elemTab); // Insere símbolo na tabela de símbolos
+            contaVar++;
+            pos++;
+          }
+     definicao_campos T_FIMDEF T_IDENTIF
+         {
+            //pos = 2;
+            strcpy(elemTab.id, atomo); // Copia o conteudo de uma string para outra
+            elemTab.tip = REG; 
+            elemTab.end = -1;
+            elemTab.tam = tam;
+            elemTab.pos = pos;
+            elemTab.campo = campos;
+            insereSimbolo(elemTab); // Insere símbolo na tabela de símbolos
+            contaVar++;
+            pos++;
+            
+         }
+    ;
+
+definicao_campos
+    : tipo lista_campos definicao_campos
+    | tipo lista_campos
+    ;
+
+lista_campos
+    : lista_campos T_IDENTIF
+        {
+            insereCampo(campos,atomo,tipo,pos,des,tam);
+            des = des + tam;
+            tam++;
+        }
+    | T_IDENTIF
+        {
+            insereCampo(campos,atomo,tipo,pos,des,tam);
+            des = des + tam;
+            tam++;  
         }
     ;
 
@@ -144,38 +215,6 @@ lista_variaveis
                 contaVar++;
             }
         }
-    ;
-
-
-definicao_registro
-    : /*vazio*/
-    | define definicao_registro
-    ;
-
-define
-    : T_DEF
-          {
-            campos = NULL;
-          }
-     definicao_campos T_FIMDEF T_IDENTIF
-         {
-            strcpy(elemTab.id, atomo);
-            elemTab.tip = REG;
-            elemTab.end = -1;
-            campos = elemTab.campo;
-            insereSimbolo(elemTab);
-            contaVar++;
-         }
-    ;
-
-definicao_campos
-    : tipo lista_campos definicao_campos
-    | tipo lista_campos
-    ;
-
-lista_campos
-    : lista_campos T_IDENTIF
-    | T_IDENTIF
     ;
 
 lista_comandos
