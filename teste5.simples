@@ -1,0 +1,19 @@
+programa registro8
+   def
+      inteiro a
+      inteiro b
+   fimdef c
+
+   inteiro a
+   inteiro b
+   registro c x
+inicio
+   leia a
+   leia b
+   x.a <- a
+   x.b <- b
+   se x.a > x.b
+      entao escreva x.a 
+      senao escreva x.b
+   fimse
+fimprograma

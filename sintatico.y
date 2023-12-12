@@ -164,7 +164,15 @@ define
 
 definicao_campos
     : tipo lista_campos definicao_campos
+        {
+            des = 0; // Passo importante para resetar o deslocamento
+                     //de um registro para outro 
+        }
     | tipo lista_campos
+        {
+            des = 0;    // Passo importante para resetar o deslocamento
+                        //de um registro para outro 
+        }
     ;
 
 lista_campos
@@ -251,17 +259,31 @@ entrada
     :T_LEIA T_IDENTIF
     {
         int pos = buscaSimbolo(atomo);
-        fprintf(yyout, "\tLEIA\n");
-        fprintf(yyout, "\tARGZ\t%d\n", tabSimb[pos].end);
+        tam = tabSimb[pos].tam;
+        if(tipo == REG){
+            for (int i = 0; i < tam; i++){
+                fprintf(yyout, "\tLEIA\n");
+                fprintf(yyout, "\tARGZ\t%d\n", i);
+            }
+        }
+        else {
+            fprintf(yyout, "\tLEIA\n");
+            fprintf(yyout, "\tARGZ\t%d\n", tabSimb[pos].end);
+        }
+
     }
     ;
 
 saida
     :T_ESCREVA expressao
-    {   desempilha(); fprintf(yyout, "\tESCR\n");}
+        {   
+            desempilha();
+            fprintf(yyout, "\tESCR\n");
+        }
     ;
 
 atribuicao
+    /*
     : T_IDENTIF
         {
             int pos = buscaSimbolo(atomo);
@@ -277,13 +299,47 @@ atribuicao
            
     }
     ;
+    */
+    : expressao_acesso
+       { 
+         // TODO #10 - FEITO
+         // Tem que guardar o TAM, DES e o TIPO (POS do tipo, se for registro)
+          empilha(tam);
+          empilha(des);
+          empilha(tipo);
+          // Possivelmente errado
+          if(tipo == REG)
+            empilha(pos);
+       }
+     T_ATRIB expressao
+       { 
+          int tipexp = desempilha();
+          int tipvar = desempilha();
+          int des = desempilha();
+          int tam = desempilha();
+          /*
+          fprintf(yyout,"%d\n",tipexp);
+          fprintf(yyout,"%d\n",tipvar);
+          if (tipexp != tipvar)
+             yyerror("Incompatibilidade de tipo!");
+          */
+          // TODO #11 - FEITO
+          // Se for registro, tem que fazer uma repetição do
+          // TAM do registro de ARZG
+          if(tipo == REG)
+            for (int i = 0; i < tam; i++)
+                fprintf(yyout, "\tARZG\t%d\n", des + i); 
+          else
+            fprintf(yyout, "\tARZG\t%d\n", des);
+       }
+   ;
 
 selecao
     : T_SE expressao T_ENTAO 
         {
             int t = desempilha();
             if(t != LOG)
-                yyerror("Incompatibilidade de tipo! ");
+                yyerror("Incompatibilidade de tipo!");
             fprintf(yyout, "\tDSVF\tL%d\n", ++rotulo);
             empilha(rotulo);
         }
@@ -311,7 +367,7 @@ repeticao
         {
             int t = desempilha();
             if(t != LOG)
-                yyerror("Incompatibilidade de tipo! ");
+                yyerror("Incompatibilidade de tipo!");
             fprintf(yyout, "\tDSVF\tL%d\n", ++rotulo);
             empilha(rotulo);
         }
@@ -347,7 +403,34 @@ expressao
     ;
 
 expressao_acesso
-    : T_IDENTIF
+    : T_IDPONTO
+        {
+            if (!ehRegistro) {
+                    ehRegistro = 1;
+                    int pos = buscaSimbolo(atomo);
+                    if(tabSimb[pos].tip != REG)
+                        yyerror("Incompatibilidade de tipo");
+                    empilha(tabSimb[pos].tam);
+                    empilha(tabSimb[pos].pos);
+                    empilha(des);
+
+            }
+            else {
+                // Possivelmente errado
+                int pos = buscaSimbolo(atomo);
+                campos = NULL;
+                campos = busca(tabSimb[pos].campo,atomo);
+                if(!campos)
+                    yyerror("O campo não é registro");
+                empilha(campos->tam);
+                empilha(campos->pos);
+                empilha(campos->desl);
+
+            }
+        }
+        expressao_acesso
+    ;
+    | T_IDENTIF
         {   
             if(ehRegistro) {
                 empilha(REG);
@@ -359,16 +442,21 @@ expressao_acesso
             }
             ehRegistro = 0; // Para sinalizar que não é registro
         }
-    | T_IDPONTO
-        {
-            if (!ehRegistro)
-                ehRegistro = 1;
-        }
-        expressao_acesso
-    ;
+    
     
 termo 
     : expressao_acesso
+        {
+          if(tabSimb[pos].tip == REG) {
+            //for (int i = 0; i < tam; i++)
+             fprintf(yyout, "\tCRVG\t%d\n", tabSimb[pos].tam);
+             //empilha(tipo); 
+          }
+          else {
+            fprintf(yyout, "\tCRVG\t%d\n", tabSimb[pos].end);  
+            empilha(tipo);
+          }
+        }
     | T_NUMERO
         {
             fprintf(yyout, "\tCRCT\t%s\n", atomo);

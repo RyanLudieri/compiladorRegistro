@@ -53,7 +53,7 @@ Gramática
 
    32 $@4: ε
 
-   33 atribuicao: T_IDENTIF $@4 T_ATRIB expressao
+   33 atribuicao: expressao_acesso $@4 T_ATRIB expressao
 
    34 $@5: ε
 
@@ -78,11 +78,10 @@ Gramática
    48          | expressao T_OU expressao
    49          | termo
 
-   50 expressao_acesso: T_IDENTIF
+   50 $@9: ε
 
-   51 $@9: ε
-
-   52 expressao_acesso: T_IDPONTO $@9 expressao_acesso
+   51 expressao_acesso: T_IDPONTO $@9 expressao_acesso
+   52                 | T_IDENTIF
 
    53 termo: expressao_acesso
    54      | T_NUMERO
@@ -99,7 +98,7 @@ Terminais, com as regras onde eles aparecem
     T_PROGRAMA (258) 4
     T_INICIO (259) 3
     T_FIM (260) 3
-    T_IDENTIF (261) 4 7 11 14 15 20 21 30 33 50
+    T_IDENTIF (261) 4 7 11 14 15 20 21 30 52
     T_LEIA (262) 30
     T_ESCREVA (263) 31
     T_ENQUANTO (264) 39
@@ -130,7 +129,7 @@ Terminais, com as regras onde eles aparecem
     T_DEF (289) 11
     T_FIMDEF (290) 11
     T_REGISTRO (291) 7
-    T_IDPONTO (292) 52
+    T_IDPONTO (292) 51
 
 
 Não terminais com as regras onde eles aparecem
@@ -219,11 +218,11 @@ Não terminais com as regras onde eles aparecem
         à esquerda: 40 41 42 43 44 45 46 47 48 49
         à direita: 31 33 36 39 40 41 42 43 44 45 46 47 48 58
     expressao_acesso (66)
-        à esquerda: 50 52
-        à direita: 52 53
+        à esquerda: 51 52
+        à direita: 33 51 53
     $@9 (67)
-        à esquerda: 51
-        à direita: 52
+        à esquerda: 50
+        à direita: 51
     termo (68)
         à esquerda: 53 54 55 56 57 58
         à direita: 49 57
@@ -490,17 +489,19 @@ Estado 28
     T_ESCREVA   deslocar, e ir ao estado 34
     T_ENQUANTO  deslocar, e ir ao estado 35
     T_SE        deslocar, e ir ao estado 36
+    T_IDPONTO   deslocar, e ir ao estado 37
 
     $padrão  reduzir usando a regra 22 (lista_comandos)
 
-    lista_comandos  ir ao estado 37
-    comando         ir ao estado 38
-    entrada_saida   ir ao estado 39
-    entrada         ir ao estado 40
-    saida           ir ao estado 41
-    atribuicao      ir ao estado 42
-    selecao         ir ao estado 43
-    repeticao       ir ao estado 44
+    lista_comandos    ir ao estado 38
+    comando           ir ao estado 39
+    entrada_saida     ir ao estado 40
+    entrada           ir ao estado 41
+    saida             ir ao estado 42
+    atribuicao        ir ao estado 43
+    selecao           ir ao estado 44
+    repeticao         ir ao estado 45
+    expressao_acesso  ir ao estado 46
 
 
 Estado 29
@@ -526,35 +527,33 @@ Estado 31
 
 Estado 32
 
-   33 atribuicao: T_IDENTIF • $@4 T_ATRIB expressao
+   52 expressao_acesso: T_IDENTIF •
 
-    $padrão  reduzir usando a regra 32 ($@4)
-
-    $@4  ir ao estado 45
+    $padrão  reduzir usando a regra 52 (expressao_acesso)
 
 
 Estado 33
 
    30 entrada: T_LEIA • T_IDENTIF
 
-    T_IDENTIF  deslocar, e ir ao estado 46
+    T_IDENTIF  deslocar, e ir ao estado 47
 
 
 Estado 34
 
    31 saida: T_ESCREVA • expressao
 
-    T_IDENTIF  deslocar, e ir ao estado 47
+    T_IDENTIF  deslocar, e ir ao estado 32
     T_V        deslocar, e ir ao estado 48
     T_F        deslocar, e ir ao estado 49
     T_NUMERO   deslocar, e ir ao estado 50
     T_NAO      deslocar, e ir ao estado 51
     T_ABRE     deslocar, e ir ao estado 52
-    T_IDPONTO  deslocar, e ir ao estado 53
+    T_IDPONTO  deslocar, e ir ao estado 37
 
-    expressao         ir ao estado 54
-    expressao_acesso  ir ao estado 55
-    termo             ir ao estado 56
+    expressao         ir ao estado 53
+    expressao_acesso  ir ao estado 54
+    termo             ir ao estado 55
 
 
 Estado 35
@@ -563,34 +562,43 @@ Estado 35
 
     $padrão  reduzir usando a regra 37 ($@7)
 
-    $@7  ir ao estado 57
+    $@7  ir ao estado 56
 
 
 Estado 36
 
    36 selecao: T_SE • expressao T_ENTAO $@5 lista_comandos T_SENAO $@6 lista_comandos T_FIMSE
 
-    T_IDENTIF  deslocar, e ir ao estado 47
+    T_IDENTIF  deslocar, e ir ao estado 32
     T_V        deslocar, e ir ao estado 48
     T_F        deslocar, e ir ao estado 49
     T_NUMERO   deslocar, e ir ao estado 50
     T_NAO      deslocar, e ir ao estado 51
     T_ABRE     deslocar, e ir ao estado 52
-    T_IDPONTO  deslocar, e ir ao estado 53
+    T_IDPONTO  deslocar, e ir ao estado 37
 
-    expressao         ir ao estado 58
-    expressao_acesso  ir ao estado 55
-    termo             ir ao estado 56
+    expressao         ir ao estado 57
+    expressao_acesso  ir ao estado 54
+    termo             ir ao estado 55
 
 
 Estado 37
+
+   51 expressao_acesso: T_IDPONTO • $@9 expressao_acesso
+
+    $padrão  reduzir usando a regra 50 ($@9)
+
+    $@9  ir ao estado 58
+
+
+Estado 38
 
     3 programa: cabecalho definicao_registro variaveis $@1 T_INICIO lista_comandos • T_FIM $@2
 
     T_FIM  deslocar, e ir ao estado 59
 
 
-Estado 38
+Estado 39
 
    23 lista_comandos: comando • lista_comandos
 
@@ -599,80 +607,77 @@ Estado 38
     T_ESCREVA   deslocar, e ir ao estado 34
     T_ENQUANTO  deslocar, e ir ao estado 35
     T_SE        deslocar, e ir ao estado 36
+    T_IDPONTO   deslocar, e ir ao estado 37
 
     $padrão  reduzir usando a regra 22 (lista_comandos)
 
-    lista_comandos  ir ao estado 60
-    comando         ir ao estado 38
-    entrada_saida   ir ao estado 39
-    entrada         ir ao estado 40
-    saida           ir ao estado 41
-    atribuicao      ir ao estado 42
-    selecao         ir ao estado 43
-    repeticao       ir ao estado 44
+    lista_comandos    ir ao estado 60
+    comando           ir ao estado 39
+    entrada_saida     ir ao estado 40
+    entrada           ir ao estado 41
+    saida             ir ao estado 42
+    atribuicao        ir ao estado 43
+    selecao           ir ao estado 44
+    repeticao         ir ao estado 45
+    expressao_acesso  ir ao estado 46
 
 
-Estado 39
+Estado 40
 
    24 comando: entrada_saida •
 
     $padrão  reduzir usando a regra 24 (comando)
 
 
-Estado 40
+Estado 41
 
    28 entrada_saida: entrada •
 
     $padrão  reduzir usando a regra 28 (entrada_saida)
 
 
-Estado 41
+Estado 42
 
    29 entrada_saida: saida •
 
     $padrão  reduzir usando a regra 29 (entrada_saida)
 
 
-Estado 42
+Estado 43
 
    25 comando: atribuicao •
 
     $padrão  reduzir usando a regra 25 (comando)
 
 
-Estado 43
+Estado 44
 
    26 comando: selecao •
 
     $padrão  reduzir usando a regra 26 (comando)
 
 
-Estado 44
+Estado 45
 
    27 comando: repeticao •
 
     $padrão  reduzir usando a regra 27 (comando)
 
 
-Estado 45
-
-   33 atribuicao: T_IDENTIF $@4 • T_ATRIB expressao
-
-    T_ATRIB  deslocar, e ir ao estado 61
-
-
 Estado 46
 
-   30 entrada: T_LEIA T_IDENTIF •
+   33 atribuicao: expressao_acesso • $@4 T_ATRIB expressao
 
-    $padrão  reduzir usando a regra 30 (entrada)
+    $padrão  reduzir usando a regra 32 ($@4)
+
+    $@4  ir ao estado 61
 
 
 Estado 47
 
-   50 expressao_acesso: T_IDENTIF •
+   30 entrada: T_LEIA T_IDENTIF •
 
-    $padrão  reduzir usando a regra 50 (expressao_acesso)
+    $padrão  reduzir usando a regra 30 (entrada)
 
 
 Estado 48
@@ -700,15 +705,15 @@ Estado 51
 
    57 termo: T_NAO • termo
 
-    T_IDENTIF  deslocar, e ir ao estado 47
+    T_IDENTIF  deslocar, e ir ao estado 32
     T_V        deslocar, e ir ao estado 48
     T_F        deslocar, e ir ao estado 49
     T_NUMERO   deslocar, e ir ao estado 50
     T_NAO      deslocar, e ir ao estado 51
     T_ABRE     deslocar, e ir ao estado 52
-    T_IDPONTO  deslocar, e ir ao estado 53
+    T_IDPONTO  deslocar, e ir ao estado 37
 
-    expressao_acesso  ir ao estado 55
+    expressao_acesso  ir ao estado 54
     termo             ir ao estado 62
 
 
@@ -716,29 +721,20 @@ Estado 52
 
    58 termo: T_ABRE • expressao T_FECHA
 
-    T_IDENTIF  deslocar, e ir ao estado 47
+    T_IDENTIF  deslocar, e ir ao estado 32
     T_V        deslocar, e ir ao estado 48
     T_F        deslocar, e ir ao estado 49
     T_NUMERO   deslocar, e ir ao estado 50
     T_NAO      deslocar, e ir ao estado 51
     T_ABRE     deslocar, e ir ao estado 52
-    T_IDPONTO  deslocar, e ir ao estado 53
+    T_IDPONTO  deslocar, e ir ao estado 37
 
     expressao         ir ao estado 63
-    expressao_acesso  ir ao estado 55
-    termo             ir ao estado 56
+    expressao_acesso  ir ao estado 54
+    termo             ir ao estado 55
 
 
 Estado 53
-
-   52 expressao_acesso: T_IDPONTO • $@9 expressao_acesso
-
-    $padrão  reduzir usando a regra 51 ($@9)
-
-    $@9  ir ao estado 64
-
-
-Estado 54
 
    31 saida: T_ESCREVA expressao •
    40 expressao: expressao • T_VEZES expressao
@@ -751,51 +747,51 @@ Estado 54
    47          | expressao • T_E expressao
    48          | expressao • T_OU expressao
 
-    T_VEZES  deslocar, e ir ao estado 65
-    T_DIV    deslocar, e ir ao estado 66
-    T_MAIS   deslocar, e ir ao estado 67
-    T_MENOS  deslocar, e ir ao estado 68
-    T_MAIOR  deslocar, e ir ao estado 69
-    T_MENOR  deslocar, e ir ao estado 70
-    T_IGUAL  deslocar, e ir ao estado 71
-    T_E      deslocar, e ir ao estado 72
-    T_OU     deslocar, e ir ao estado 73
+    T_VEZES  deslocar, e ir ao estado 64
+    T_DIV    deslocar, e ir ao estado 65
+    T_MAIS   deslocar, e ir ao estado 66
+    T_MENOS  deslocar, e ir ao estado 67
+    T_MAIOR  deslocar, e ir ao estado 68
+    T_MENOR  deslocar, e ir ao estado 69
+    T_IGUAL  deslocar, e ir ao estado 70
+    T_E      deslocar, e ir ao estado 71
+    T_OU     deslocar, e ir ao estado 72
 
     $padrão  reduzir usando a regra 31 (saida)
 
 
-Estado 55
+Estado 54
 
    53 termo: expressao_acesso •
 
     $padrão  reduzir usando a regra 53 (termo)
 
 
-Estado 56
+Estado 55
 
    49 expressao: termo •
 
     $padrão  reduzir usando a regra 49 (expressao)
 
 
-Estado 57
+Estado 56
 
    39 repeticao: T_ENQUANTO $@7 • expressao T_FACA $@8 lista_comandos T_FIMENQTO
 
-    T_IDENTIF  deslocar, e ir ao estado 47
+    T_IDENTIF  deslocar, e ir ao estado 32
     T_V        deslocar, e ir ao estado 48
     T_F        deslocar, e ir ao estado 49
     T_NUMERO   deslocar, e ir ao estado 50
     T_NAO      deslocar, e ir ao estado 51
     T_ABRE     deslocar, e ir ao estado 52
-    T_IDPONTO  deslocar, e ir ao estado 53
+    T_IDPONTO  deslocar, e ir ao estado 37
 
-    expressao         ir ao estado 74
-    expressao_acesso  ir ao estado 55
-    termo             ir ao estado 56
+    expressao         ir ao estado 73
+    expressao_acesso  ir ao estado 54
+    termo             ir ao estado 55
 
 
-Estado 58
+Estado 57
 
    36 selecao: T_SE expressao • T_ENTAO $@5 lista_comandos T_SENAO $@6 lista_comandos T_FIMSE
    40 expressao: expressao • T_VEZES expressao
@@ -808,16 +804,26 @@ Estado 58
    47          | expressao • T_E expressao
    48          | expressao • T_OU expressao
 
-    T_ENTAO  deslocar, e ir ao estado 75
-    T_VEZES  deslocar, e ir ao estado 65
-    T_DIV    deslocar, e ir ao estado 66
-    T_MAIS   deslocar, e ir ao estado 67
-    T_MENOS  deslocar, e ir ao estado 68
-    T_MAIOR  deslocar, e ir ao estado 69
-    T_MENOR  deslocar, e ir ao estado 70
-    T_IGUAL  deslocar, e ir ao estado 71
-    T_E      deslocar, e ir ao estado 72
-    T_OU     deslocar, e ir ao estado 73
+    T_ENTAO  deslocar, e ir ao estado 74
+    T_VEZES  deslocar, e ir ao estado 64
+    T_DIV    deslocar, e ir ao estado 65
+    T_MAIS   deslocar, e ir ao estado 66
+    T_MENOS  deslocar, e ir ao estado 67
+    T_MAIOR  deslocar, e ir ao estado 68
+    T_MENOR  deslocar, e ir ao estado 69
+    T_IGUAL  deslocar, e ir ao estado 70
+    T_E      deslocar, e ir ao estado 71
+    T_OU     deslocar, e ir ao estado 72
+
+
+Estado 58
+
+   51 expressao_acesso: T_IDPONTO $@9 • expressao_acesso
+
+    T_IDENTIF  deslocar, e ir ao estado 32
+    T_IDPONTO  deslocar, e ir ao estado 37
+
+    expressao_acesso  ir ao estado 75
 
 
 Estado 59
@@ -838,19 +844,9 @@ Estado 60
 
 Estado 61
 
-   33 atribuicao: T_IDENTIF $@4 T_ATRIB • expressao
+   33 atribuicao: expressao_acesso $@4 • T_ATRIB expressao
 
-    T_IDENTIF  deslocar, e ir ao estado 47
-    T_V        deslocar, e ir ao estado 48
-    T_F        deslocar, e ir ao estado 49
-    T_NUMERO   deslocar, e ir ao estado 50
-    T_NAO      deslocar, e ir ao estado 51
-    T_ABRE     deslocar, e ir ao estado 52
-    T_IDPONTO  deslocar, e ir ao estado 53
-
-    expressao         ir ao estado 77
-    expressao_acesso  ir ao estado 55
-    termo             ir ao estado 56
+    T_ATRIB  deslocar, e ir ao estado 77
 
 
 Estado 62
@@ -873,182 +869,172 @@ Estado 63
    48          | expressao • T_OU expressao
    58 termo: T_ABRE expressao • T_FECHA
 
-    T_VEZES  deslocar, e ir ao estado 65
-    T_DIV    deslocar, e ir ao estado 66
-    T_MAIS   deslocar, e ir ao estado 67
-    T_MENOS  deslocar, e ir ao estado 68
-    T_MAIOR  deslocar, e ir ao estado 69
-    T_MENOR  deslocar, e ir ao estado 70
-    T_IGUAL  deslocar, e ir ao estado 71
-    T_E      deslocar, e ir ao estado 72
-    T_OU     deslocar, e ir ao estado 73
+    T_VEZES  deslocar, e ir ao estado 64
+    T_DIV    deslocar, e ir ao estado 65
+    T_MAIS   deslocar, e ir ao estado 66
+    T_MENOS  deslocar, e ir ao estado 67
+    T_MAIOR  deslocar, e ir ao estado 68
+    T_MENOR  deslocar, e ir ao estado 69
+    T_IGUAL  deslocar, e ir ao estado 70
+    T_E      deslocar, e ir ao estado 71
+    T_OU     deslocar, e ir ao estado 72
     T_FECHA  deslocar, e ir ao estado 78
 
 
 Estado 64
 
-   52 expressao_acesso: T_IDPONTO $@9 • expressao_acesso
+   40 expressao: expressao T_VEZES • expressao
 
-    T_IDENTIF  deslocar, e ir ao estado 47
-    T_IDPONTO  deslocar, e ir ao estado 53
+    T_IDENTIF  deslocar, e ir ao estado 32
+    T_V        deslocar, e ir ao estado 48
+    T_F        deslocar, e ir ao estado 49
+    T_NUMERO   deslocar, e ir ao estado 50
+    T_NAO      deslocar, e ir ao estado 51
+    T_ABRE     deslocar, e ir ao estado 52
+    T_IDPONTO  deslocar, e ir ao estado 37
 
-    expressao_acesso  ir ao estado 79
+    expressao         ir ao estado 79
+    expressao_acesso  ir ao estado 54
+    termo             ir ao estado 55
 
 
 Estado 65
 
-   40 expressao: expressao T_VEZES • expressao
+   42 expressao: expressao T_DIV • expressao
 
-    T_IDENTIF  deslocar, e ir ao estado 47
+    T_IDENTIF  deslocar, e ir ao estado 32
     T_V        deslocar, e ir ao estado 48
     T_F        deslocar, e ir ao estado 49
     T_NUMERO   deslocar, e ir ao estado 50
     T_NAO      deslocar, e ir ao estado 51
     T_ABRE     deslocar, e ir ao estado 52
-    T_IDPONTO  deslocar, e ir ao estado 53
+    T_IDPONTO  deslocar, e ir ao estado 37
 
     expressao         ir ao estado 80
-    expressao_acesso  ir ao estado 55
-    termo             ir ao estado 56
+    expressao_acesso  ir ao estado 54
+    termo             ir ao estado 55
 
 
 Estado 66
 
-   42 expressao: expressao T_DIV • expressao
+   41 expressao: expressao T_MAIS • expressao
 
-    T_IDENTIF  deslocar, e ir ao estado 47
+    T_IDENTIF  deslocar, e ir ao estado 32
     T_V        deslocar, e ir ao estado 48
     T_F        deslocar, e ir ao estado 49
     T_NUMERO   deslocar, e ir ao estado 50
     T_NAO      deslocar, e ir ao estado 51
     T_ABRE     deslocar, e ir ao estado 52
-    T_IDPONTO  deslocar, e ir ao estado 53
+    T_IDPONTO  deslocar, e ir ao estado 37
 
     expressao         ir ao estado 81
-    expressao_acesso  ir ao estado 55
-    termo             ir ao estado 56
+    expressao_acesso  ir ao estado 54
+    termo             ir ao estado 55
 
 
 Estado 67
 
-   41 expressao: expressao T_MAIS • expressao
+   43 expressao: expressao T_MENOS • expressao
 
-    T_IDENTIF  deslocar, e ir ao estado 47
+    T_IDENTIF  deslocar, e ir ao estado 32
     T_V        deslocar, e ir ao estado 48
     T_F        deslocar, e ir ao estado 49
     T_NUMERO   deslocar, e ir ao estado 50
     T_NAO      deslocar, e ir ao estado 51
     T_ABRE     deslocar, e ir ao estado 52
-    T_IDPONTO  deslocar, e ir ao estado 53
+    T_IDPONTO  deslocar, e ir ao estado 37
 
     expressao         ir ao estado 82
-    expressao_acesso  ir ao estado 55
-    termo             ir ao estado 56
+    expressao_acesso  ir ao estado 54
+    termo             ir ao estado 55
 
 
 Estado 68
 
-   43 expressao: expressao T_MENOS • expressao
+   44 expressao: expressao T_MAIOR • expressao
 
-    T_IDENTIF  deslocar, e ir ao estado 47
+    T_IDENTIF  deslocar, e ir ao estado 32
     T_V        deslocar, e ir ao estado 48
     T_F        deslocar, e ir ao estado 49
     T_NUMERO   deslocar, e ir ao estado 50
     T_NAO      deslocar, e ir ao estado 51
     T_ABRE     deslocar, e ir ao estado 52
-    T_IDPONTO  deslocar, e ir ao estado 53
+    T_IDPONTO  deslocar, e ir ao estado 37
 
     expressao         ir ao estado 83
-    expressao_acesso  ir ao estado 55
-    termo             ir ao estado 56
+    expressao_acesso  ir ao estado 54
+    termo             ir ao estado 55
 
 
 Estado 69
 
-   44 expressao: expressao T_MAIOR • expressao
+   45 expressao: expressao T_MENOR • expressao
 
-    T_IDENTIF  deslocar, e ir ao estado 47
+    T_IDENTIF  deslocar, e ir ao estado 32
     T_V        deslocar, e ir ao estado 48
     T_F        deslocar, e ir ao estado 49
     T_NUMERO   deslocar, e ir ao estado 50
     T_NAO      deslocar, e ir ao estado 51
     T_ABRE     deslocar, e ir ao estado 52
-    T_IDPONTO  deslocar, e ir ao estado 53
+    T_IDPONTO  deslocar, e ir ao estado 37
 
     expressao         ir ao estado 84
-    expressao_acesso  ir ao estado 55
-    termo             ir ao estado 56
+    expressao_acesso  ir ao estado 54
+    termo             ir ao estado 55
 
 
 Estado 70
 
-   45 expressao: expressao T_MENOR • expressao
+   46 expressao: expressao T_IGUAL • expressao
 
-    T_IDENTIF  deslocar, e ir ao estado 47
+    T_IDENTIF  deslocar, e ir ao estado 32
     T_V        deslocar, e ir ao estado 48
     T_F        deslocar, e ir ao estado 49
     T_NUMERO   deslocar, e ir ao estado 50
     T_NAO      deslocar, e ir ao estado 51
     T_ABRE     deslocar, e ir ao estado 52
-    T_IDPONTO  deslocar, e ir ao estado 53
+    T_IDPONTO  deslocar, e ir ao estado 37
 
     expressao         ir ao estado 85
-    expressao_acesso  ir ao estado 55
-    termo             ir ao estado 56
+    expressao_acesso  ir ao estado 54
+    termo             ir ao estado 55
 
 
 Estado 71
 
-   46 expressao: expressao T_IGUAL • expressao
+   47 expressao: expressao T_E • expressao
 
-    T_IDENTIF  deslocar, e ir ao estado 47
+    T_IDENTIF  deslocar, e ir ao estado 32
     T_V        deslocar, e ir ao estado 48
     T_F        deslocar, e ir ao estado 49
     T_NUMERO   deslocar, e ir ao estado 50
     T_NAO      deslocar, e ir ao estado 51
     T_ABRE     deslocar, e ir ao estado 52
-    T_IDPONTO  deslocar, e ir ao estado 53
+    T_IDPONTO  deslocar, e ir ao estado 37
 
     expressao         ir ao estado 86
-    expressao_acesso  ir ao estado 55
-    termo             ir ao estado 56
+    expressao_acesso  ir ao estado 54
+    termo             ir ao estado 55
 
 
 Estado 72
 
-   47 expressao: expressao T_E • expressao
+   48 expressao: expressao T_OU • expressao
 
-    T_IDENTIF  deslocar, e ir ao estado 47
+    T_IDENTIF  deslocar, e ir ao estado 32
     T_V        deslocar, e ir ao estado 48
     T_F        deslocar, e ir ao estado 49
     T_NUMERO   deslocar, e ir ao estado 50
     T_NAO      deslocar, e ir ao estado 51
     T_ABRE     deslocar, e ir ao estado 52
-    T_IDPONTO  deslocar, e ir ao estado 53
+    T_IDPONTO  deslocar, e ir ao estado 37
 
     expressao         ir ao estado 87
-    expressao_acesso  ir ao estado 55
-    termo             ir ao estado 56
+    expressao_acesso  ir ao estado 54
+    termo             ir ao estado 55
 
 
 Estado 73
-
-   48 expressao: expressao T_OU • expressao
-
-    T_IDENTIF  deslocar, e ir ao estado 47
-    T_V        deslocar, e ir ao estado 48
-    T_F        deslocar, e ir ao estado 49
-    T_NUMERO   deslocar, e ir ao estado 50
-    T_NAO      deslocar, e ir ao estado 51
-    T_ABRE     deslocar, e ir ao estado 52
-    T_IDPONTO  deslocar, e ir ao estado 53
-
-    expressao         ir ao estado 88
-    expressao_acesso  ir ao estado 55
-    termo             ir ao estado 56
-
-
-Estado 74
 
    39 repeticao: T_ENQUANTO $@7 expressao • T_FACA $@8 lista_comandos T_FIMENQTO
    40 expressao: expressao • T_VEZES expressao
@@ -1061,25 +1047,32 @@ Estado 74
    47          | expressao • T_E expressao
    48          | expressao • T_OU expressao
 
-    T_FACA   deslocar, e ir ao estado 89
-    T_VEZES  deslocar, e ir ao estado 65
-    T_DIV    deslocar, e ir ao estado 66
-    T_MAIS   deslocar, e ir ao estado 67
-    T_MENOS  deslocar, e ir ao estado 68
-    T_MAIOR  deslocar, e ir ao estado 69
-    T_MENOR  deslocar, e ir ao estado 70
-    T_IGUAL  deslocar, e ir ao estado 71
-    T_E      deslocar, e ir ao estado 72
-    T_OU     deslocar, e ir ao estado 73
+    T_FACA   deslocar, e ir ao estado 88
+    T_VEZES  deslocar, e ir ao estado 64
+    T_DIV    deslocar, e ir ao estado 65
+    T_MAIS   deslocar, e ir ao estado 66
+    T_MENOS  deslocar, e ir ao estado 67
+    T_MAIOR  deslocar, e ir ao estado 68
+    T_MENOR  deslocar, e ir ao estado 69
+    T_IGUAL  deslocar, e ir ao estado 70
+    T_E      deslocar, e ir ao estado 71
+    T_OU     deslocar, e ir ao estado 72
 
 
-Estado 75
+Estado 74
 
    36 selecao: T_SE expressao T_ENTAO • $@5 lista_comandos T_SENAO $@6 lista_comandos T_FIMSE
 
     $padrão  reduzir usando a regra 34 ($@5)
 
-    $@5  ir ao estado 90
+    $@5  ir ao estado 89
+
+
+Estado 75
+
+   51 expressao_acesso: T_IDPONTO $@9 expressao_acesso •
+
+    $padrão  reduzir usando a regra 51 (expressao_acesso)
 
 
 Estado 76
@@ -1091,28 +1084,19 @@ Estado 76
 
 Estado 77
 
-   33 atribuicao: T_IDENTIF $@4 T_ATRIB expressao •
-   40 expressao: expressao • T_VEZES expressao
-   41          | expressao • T_MAIS expressao
-   42          | expressao • T_DIV expressao
-   43          | expressao • T_MENOS expressao
-   44          | expressao • T_MAIOR expressao
-   45          | expressao • T_MENOR expressao
-   46          | expressao • T_IGUAL expressao
-   47          | expressao • T_E expressao
-   48          | expressao • T_OU expressao
+   33 atribuicao: expressao_acesso $@4 T_ATRIB • expressao
 
-    T_VEZES  deslocar, e ir ao estado 65
-    T_DIV    deslocar, e ir ao estado 66
-    T_MAIS   deslocar, e ir ao estado 67
-    T_MENOS  deslocar, e ir ao estado 68
-    T_MAIOR  deslocar, e ir ao estado 69
-    T_MENOR  deslocar, e ir ao estado 70
-    T_IGUAL  deslocar, e ir ao estado 71
-    T_E      deslocar, e ir ao estado 72
-    T_OU     deslocar, e ir ao estado 73
+    T_IDENTIF  deslocar, e ir ao estado 32
+    T_V        deslocar, e ir ao estado 48
+    T_F        deslocar, e ir ao estado 49
+    T_NUMERO   deslocar, e ir ao estado 50
+    T_NAO      deslocar, e ir ao estado 51
+    T_ABRE     deslocar, e ir ao estado 52
+    T_IDPONTO  deslocar, e ir ao estado 37
 
-    $padrão  reduzir usando a regra 33 (atribuicao)
+    expressao         ir ao estado 90
+    expressao_acesso  ir ao estado 54
+    termo             ir ao estado 55
 
 
 Estado 78
@@ -1123,13 +1107,6 @@ Estado 78
 
 
 Estado 79
-
-   52 expressao_acesso: T_IDPONTO $@9 expressao_acesso •
-
-    $padrão  reduzir usando a regra 52 (expressao_acesso)
-
-
-Estado 80
 
    40 expressao: expressao • T_VEZES expressao
    40          | expressao T_VEZES expressao •
@@ -1145,7 +1122,7 @@ Estado 80
     $padrão  reduzir usando a regra 40 (expressao)
 
 
-Estado 81
+Estado 80
 
    40 expressao: expressao • T_VEZES expressao
    41          | expressao • T_MAIS expressao
@@ -1161,7 +1138,7 @@ Estado 81
     $padrão  reduzir usando a regra 42 (expressao)
 
 
-Estado 82
+Estado 81
 
    40 expressao: expressao • T_VEZES expressao
    41          | expressao • T_MAIS expressao
@@ -1174,13 +1151,13 @@ Estado 82
    47          | expressao • T_E expressao
    48          | expressao • T_OU expressao
 
-    T_VEZES  deslocar, e ir ao estado 65
-    T_DIV    deslocar, e ir ao estado 66
+    T_VEZES  deslocar, e ir ao estado 64
+    T_DIV    deslocar, e ir ao estado 65
 
     $padrão  reduzir usando a regra 41 (expressao)
 
 
-Estado 83
+Estado 82
 
    40 expressao: expressao • T_VEZES expressao
    41          | expressao • T_MAIS expressao
@@ -1193,13 +1170,13 @@ Estado 83
    47          | expressao • T_E expressao
    48          | expressao • T_OU expressao
 
-    T_VEZES  deslocar, e ir ao estado 65
-    T_DIV    deslocar, e ir ao estado 66
+    T_VEZES  deslocar, e ir ao estado 64
+    T_DIV    deslocar, e ir ao estado 65
 
     $padrão  reduzir usando a regra 43 (expressao)
 
 
-Estado 84
+Estado 83
 
    40 expressao: expressao • T_VEZES expressao
    41          | expressao • T_MAIS expressao
@@ -1212,15 +1189,15 @@ Estado 84
    47          | expressao • T_E expressao
    48          | expressao • T_OU expressao
 
-    T_VEZES  deslocar, e ir ao estado 65
-    T_DIV    deslocar, e ir ao estado 66
-    T_MAIS   deslocar, e ir ao estado 67
-    T_MENOS  deslocar, e ir ao estado 68
+    T_VEZES  deslocar, e ir ao estado 64
+    T_DIV    deslocar, e ir ao estado 65
+    T_MAIS   deslocar, e ir ao estado 66
+    T_MENOS  deslocar, e ir ao estado 67
 
     $padrão  reduzir usando a regra 44 (expressao)
 
 
-Estado 85
+Estado 84
 
    40 expressao: expressao • T_VEZES expressao
    41          | expressao • T_MAIS expressao
@@ -1233,15 +1210,15 @@ Estado 85
    47          | expressao • T_E expressao
    48          | expressao • T_OU expressao
 
-    T_VEZES  deslocar, e ir ao estado 65
-    T_DIV    deslocar, e ir ao estado 66
-    T_MAIS   deslocar, e ir ao estado 67
-    T_MENOS  deslocar, e ir ao estado 68
+    T_VEZES  deslocar, e ir ao estado 64
+    T_DIV    deslocar, e ir ao estado 65
+    T_MAIS   deslocar, e ir ao estado 66
+    T_MENOS  deslocar, e ir ao estado 67
 
     $padrão  reduzir usando a regra 45 (expressao)
 
 
-Estado 86
+Estado 85
 
    40 expressao: expressao • T_VEZES expressao
    41          | expressao • T_MAIS expressao
@@ -1254,17 +1231,17 @@ Estado 86
    47          | expressao • T_E expressao
    48          | expressao • T_OU expressao
 
-    T_VEZES  deslocar, e ir ao estado 65
-    T_DIV    deslocar, e ir ao estado 66
-    T_MAIS   deslocar, e ir ao estado 67
-    T_MENOS  deslocar, e ir ao estado 68
-    T_MAIOR  deslocar, e ir ao estado 69
-    T_MENOR  deslocar, e ir ao estado 70
+    T_VEZES  deslocar, e ir ao estado 64
+    T_DIV    deslocar, e ir ao estado 65
+    T_MAIS   deslocar, e ir ao estado 66
+    T_MENOS  deslocar, e ir ao estado 67
+    T_MAIOR  deslocar, e ir ao estado 68
+    T_MENOR  deslocar, e ir ao estado 69
 
     $padrão  reduzir usando a regra 46 (expressao)
 
 
-Estado 87
+Estado 86
 
    40 expressao: expressao • T_VEZES expressao
    41          | expressao • T_MAIS expressao
@@ -1277,18 +1254,18 @@ Estado 87
    47          | expressao T_E expressao •
    48          | expressao • T_OU expressao
 
-    T_VEZES  deslocar, e ir ao estado 65
-    T_DIV    deslocar, e ir ao estado 66
-    T_MAIS   deslocar, e ir ao estado 67
-    T_MENOS  deslocar, e ir ao estado 68
-    T_MAIOR  deslocar, e ir ao estado 69
-    T_MENOR  deslocar, e ir ao estado 70
-    T_IGUAL  deslocar, e ir ao estado 71
+    T_VEZES  deslocar, e ir ao estado 64
+    T_DIV    deslocar, e ir ao estado 65
+    T_MAIS   deslocar, e ir ao estado 66
+    T_MENOS  deslocar, e ir ao estado 67
+    T_MAIOR  deslocar, e ir ao estado 68
+    T_MENOR  deslocar, e ir ao estado 69
+    T_IGUAL  deslocar, e ir ao estado 70
 
     $padrão  reduzir usando a regra 47 (expressao)
 
 
-Estado 88
+Estado 87
 
    40 expressao: expressao • T_VEZES expressao
    41          | expressao • T_MAIS expressao
@@ -1301,18 +1278,18 @@ Estado 88
    48          | expressao • T_OU expressao
    48          | expressao T_OU expressao •
 
-    T_VEZES  deslocar, e ir ao estado 65
-    T_DIV    deslocar, e ir ao estado 66
-    T_MAIS   deslocar, e ir ao estado 67
-    T_MENOS  deslocar, e ir ao estado 68
-    T_MAIOR  deslocar, e ir ao estado 69
-    T_MENOR  deslocar, e ir ao estado 70
-    T_IGUAL  deslocar, e ir ao estado 71
+    T_VEZES  deslocar, e ir ao estado 64
+    T_DIV    deslocar, e ir ao estado 65
+    T_MAIS   deslocar, e ir ao estado 66
+    T_MENOS  deslocar, e ir ao estado 67
+    T_MAIOR  deslocar, e ir ao estado 68
+    T_MENOR  deslocar, e ir ao estado 69
+    T_IGUAL  deslocar, e ir ao estado 70
 
     $padrão  reduzir usando a regra 48 (expressao)
 
 
-Estado 89
+Estado 88
 
    39 repeticao: T_ENQUANTO $@7 expressao T_FACA • $@8 lista_comandos T_FIMENQTO
 
@@ -1321,7 +1298,7 @@ Estado 89
     $@8  ir ao estado 91
 
 
-Estado 90
+Estado 89
 
    36 selecao: T_SE expressao T_ENTAO $@5 • lista_comandos T_SENAO $@6 lista_comandos T_FIMSE
 
@@ -1330,17 +1307,45 @@ Estado 90
     T_ESCREVA   deslocar, e ir ao estado 34
     T_ENQUANTO  deslocar, e ir ao estado 35
     T_SE        deslocar, e ir ao estado 36
+    T_IDPONTO   deslocar, e ir ao estado 37
 
     $padrão  reduzir usando a regra 22 (lista_comandos)
 
-    lista_comandos  ir ao estado 92
-    comando         ir ao estado 38
-    entrada_saida   ir ao estado 39
-    entrada         ir ao estado 40
-    saida           ir ao estado 41
-    atribuicao      ir ao estado 42
-    selecao         ir ao estado 43
-    repeticao       ir ao estado 44
+    lista_comandos    ir ao estado 92
+    comando           ir ao estado 39
+    entrada_saida     ir ao estado 40
+    entrada           ir ao estado 41
+    saida             ir ao estado 42
+    atribuicao        ir ao estado 43
+    selecao           ir ao estado 44
+    repeticao         ir ao estado 45
+    expressao_acesso  ir ao estado 46
+
+
+Estado 90
+
+   33 atribuicao: expressao_acesso $@4 T_ATRIB expressao •
+   40 expressao: expressao • T_VEZES expressao
+   41          | expressao • T_MAIS expressao
+   42          | expressao • T_DIV expressao
+   43          | expressao • T_MENOS expressao
+   44          | expressao • T_MAIOR expressao
+   45          | expressao • T_MENOR expressao
+   46          | expressao • T_IGUAL expressao
+   47          | expressao • T_E expressao
+   48          | expressao • T_OU expressao
+
+    T_VEZES  deslocar, e ir ao estado 64
+    T_DIV    deslocar, e ir ao estado 65
+    T_MAIS   deslocar, e ir ao estado 66
+    T_MENOS  deslocar, e ir ao estado 67
+    T_MAIOR  deslocar, e ir ao estado 68
+    T_MENOR  deslocar, e ir ao estado 69
+    T_IGUAL  deslocar, e ir ao estado 70
+    T_E      deslocar, e ir ao estado 71
+    T_OU     deslocar, e ir ao estado 72
+
+    $padrão  reduzir usando a regra 33 (atribuicao)
 
 
 Estado 91
@@ -1352,17 +1357,19 @@ Estado 91
     T_ESCREVA   deslocar, e ir ao estado 34
     T_ENQUANTO  deslocar, e ir ao estado 35
     T_SE        deslocar, e ir ao estado 36
+    T_IDPONTO   deslocar, e ir ao estado 37
 
     $padrão  reduzir usando a regra 22 (lista_comandos)
 
-    lista_comandos  ir ao estado 93
-    comando         ir ao estado 38
-    entrada_saida   ir ao estado 39
-    entrada         ir ao estado 40
-    saida           ir ao estado 41
-    atribuicao      ir ao estado 42
-    selecao         ir ao estado 43
-    repeticao       ir ao estado 44
+    lista_comandos    ir ao estado 93
+    comando           ir ao estado 39
+    entrada_saida     ir ao estado 40
+    entrada           ir ao estado 41
+    saida             ir ao estado 42
+    atribuicao        ir ao estado 43
+    selecao           ir ao estado 44
+    repeticao         ir ao estado 45
+    expressao_acesso  ir ao estado 46
 
 
 Estado 92
@@ -1404,17 +1411,19 @@ Estado 96
     T_ESCREVA   deslocar, e ir ao estado 34
     T_ENQUANTO  deslocar, e ir ao estado 35
     T_SE        deslocar, e ir ao estado 36
+    T_IDPONTO   deslocar, e ir ao estado 37
 
     $padrão  reduzir usando a regra 22 (lista_comandos)
 
-    lista_comandos  ir ao estado 97
-    comando         ir ao estado 38
-    entrada_saida   ir ao estado 39
-    entrada         ir ao estado 40
-    saida           ir ao estado 41
-    atribuicao      ir ao estado 42
-    selecao         ir ao estado 43
-    repeticao       ir ao estado 44
+    lista_comandos    ir ao estado 97
+    comando           ir ao estado 39
+    entrada_saida     ir ao estado 40
+    entrada           ir ao estado 41
+    saida             ir ao estado 42
+    atribuicao        ir ao estado 43
+    selecao           ir ao estado 44
+    repeticao         ir ao estado 45
+    expressao_acesso  ir ao estado 46
 
 
 Estado 97
