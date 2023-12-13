@@ -1295,7 +1295,7 @@ yyreduce:
             tipo = REG;
             pos = buscaSimbolo(atomo);
             tam = tabSimb[pos].tam;
-            elemTab.campo = campos;
+            elemTab.campo = tabSimb[pos].campo;
             campos = NULL;
         }
 #line 1302 "sintatico.c"
