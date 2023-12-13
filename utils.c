@@ -117,8 +117,8 @@ void mostraTab(){
              tabSimb[i].tam,
              tabSimb[i].pos
              );
-
-        mostra(tabSimb[i].campo);
+        if(tabSimb[i].tip == REG)
+            mostra(tabSimb[i].campo);
     }
     puts("");
 }

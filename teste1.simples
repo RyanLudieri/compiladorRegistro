@@ -9,18 +9,12 @@ programa registro9
 inicio
     leia a 
     leia b
+    
     y.a <- a 
     y.b <- b
     x <- y
-    /*
     enquanto x.a < x.b faca
         escreva x.a 
         x.a <- x.a + 1
     fimenquanto
-    
-    enquanto a < b faca
-        escreva a 
-        a <- a + 1
-    fimenquanto
-    */
 fimprograma

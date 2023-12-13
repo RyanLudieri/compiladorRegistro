@@ -111,7 +111,7 @@ tipo
             tipo = LOG;
             tam = 1;
             pos = buscaSimbolo("logico");
-            elemTab.campo = NULL;
+            //elemTab.campo = NULL;
             
         }
     |T_INTEIRO
@@ -119,7 +119,7 @@ tipo
             tipo = INT;
             tam = 1;
             pos = buscaSimbolo("inteiro");
-            elemTab.campo = NULL;
+            //elemTab.campo = NULL;
             
         }
     |T_REGISTRO T_IDENTIF
@@ -260,10 +260,9 @@ entrada
     {
         int pos = buscaSimbolo(atomo);
         if(tabSimb[pos].tip == REG){
-            tam = tabSimb[pos].tam;
             for (int i = 0; i < tam; i++){
                 fprintf(yyout, "\tLEIA\n");
-                fprintf(yyout, "\tARZG\t%d\n", i);
+                fprintf(yyout, "\tARZG\t%d\n", tabSimb[pos].end);
             }
         }
         else {
@@ -427,9 +426,9 @@ expressao_acesso
             }
             else {
                 // Possivelmente errado
-                int pos = buscaSimbolo(atomo);
-                campos = NULL;
-                campos = busca(tabSimb[pos].campo,atomo);
+                //int pos = buscaSimbolo(atomo);
+                //campos = NULL;
+                campos = busca(campos,atomo);
                 if(campos == NULL)
                     yyerror("O campo não é registro");
                 empilha(campos->tam);
@@ -466,15 +465,22 @@ expressao_acesso
 termo 
     : expressao_acesso
         {
-          if(tabSimb[pos].tip == REG) {
-            for (int i = 0; i < tam; i++)
-             fprintf(yyout, "\tCRVG\t%d\n", tabSimb[pos].tam);
-             empilha(tipo); 
+          indice = buscaSimbolo(atomo);
+            
+          if(tabSimb[indice].tip == REG) {
+            for (int i = tabSimb[indice].tam ; i > 0; i--) {
+                fprintf(yyout, "\tCRVG\t%d\n", i);
+                empilha(tipo);
+                // des = tabSimb[pos].campo->desl; 
+            }
           }
           else {
-            fprintf(yyout, "\tCRVG\t%d\n", tabSimb[pos].end);  
+            fprintf(yyout, "\tCRVG\t%d\n", tabSimb[indice].end);  
             empilha(tipo);
           }
+          pos = indice;
+          //des = ;
+          //tip =;
         }
     | T_NUMERO
         {
