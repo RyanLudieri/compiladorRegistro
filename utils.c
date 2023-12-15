@@ -151,3 +151,16 @@ void testaTipo(int tipo1, int tipo2, int ret){
 }
 
 
+
+ptno buscaCampo(int endereco, char *nomeCampo){
+    int posicao;
+    for(posicao = posTab -1; tabSimb[posicao].pos != endereco && posicao >=0 ; posicao--);
+    ptno cabeca = tabSimb[posicao].campo;
+    while(cabeca){ 
+        if(strcmp(nomeCampo, cabeca->nome) == 0){
+            return cabeca;
+        }
+        cabeca = cabeca->prox;
+    }
+    return NULL;
+}
