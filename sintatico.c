@@ -1407,21 +1407,21 @@ yyreduce:
 
   case 31: /* entrada: T_LEIA T_IDENTIF  */
 #line 254 "sintatico.y"
-    {
-        int pos = buscaSimbolo(atomo);
-        if(tabSimb[pos].tip == REG){
-            int end = tabSimb[pos].end;
-            for (int i = 0; i < tabSimb[pos].end; i++, end++){
-                fprintf(yyout, "\tLEIA\n");
-                fprintf(yyout, "\tARZG\t%d\n", end);
+        {
+            int pos = buscaSimbolo(atomo);
+            if(tabSimb[pos].tip == REG){
+                int end = tabSimb[pos].end;
+                for (int i = 0; i < tabSimb[pos].end; i++, end++){
+                    fprintf(yyout, "\tLEIA\n");
+                    fprintf(yyout, "\tARZG\t%d\n", end);
+                }
             }
-        }
-        else {
-            fprintf(yyout, "\tLEIA\n");
-            fprintf(yyout, "\tARZG\t%d\n", tabSimb[pos].end);
-        }
+            else {
+                fprintf(yyout, "\tLEIA\n");
+                fprintf(yyout, "\tARZG\t%d\n", tabSimb[pos].end);
+            }
 
-    }
+        }
 #line 1426 "sintatico.c"
     break;
 
@@ -1588,7 +1588,7 @@ yyreduce:
         {
             if (!ehRegistro) {
                     ehRegistro = 1;
-                    int pos = buscaSimbolo(atomo);
+                    /*int*/ pos = buscaSimbolo(atomo);
                     if(tabSimb[pos].tip != REG)
                         yyerror("Identificador não é um registro!");
                     des = tabSimb[pos].end;
@@ -1596,7 +1596,7 @@ yyreduce:
 
             }
             else {
-                //int pos = buscaSimbolo(atomo);
+                /*int*/ pos = buscaSimbolo(atomo);
                 campos = buscaCampo(tipo,atomo);
                 if(campos == NULL)
                     yyerror("O campo não é registro");
@@ -1627,7 +1627,7 @@ yyreduce:
 
             }
             else {
-                int pos = buscaSimbolo(atomo);
+                /*int*/ pos = buscaSimbolo(atomo);
                 // fprintf(yyout, "\tCRVG\t%d\n", tabSimb[pos].end);
                 tam = tabSimb[pos].tam;
                 tipo = tabSimb[pos].tip;
@@ -1641,9 +1641,9 @@ yyreduce:
   case 54: /* termo: expressao_acesso  */
 #line 427 "sintatico.y"
         {
-          indice = buscaSimbolo(atomo);
-          int endereco = (tabSimb[indice].tam-1) + des;
-            for (int i = tabSimb[indice].tam; i > 0; i--) {
+          //indice = buscaSimbolo(atomo);
+          int endereco = (/*tabSimb[indice].*/tam-1) + des;
+            for (int i = /*tabSimb[indice].*/tam; i > 0; i--) {
                 fprintf(yyout, "\tCRVG\t%d\n", endereco--);
                 
             }

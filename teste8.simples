@@ -5,19 +5,26 @@
    inteiro |  -1 | INT |   1 |   0 |
     logico |  -1 | LOG |   1 |   1 |
          c |  -1 | REG |   2 |   2 | (a,INT,0,0,1)=> (b,INT,0,1,1)
-         x |   0 | REG |   2 |   2 | (a,INT,0,0,1)=> (b,INT,0,1,1)
+         a |   0 | INT |   1 |   0 |
+         b |   1 | INT |   1 |   0 |
+         x |   2 | REG |   2 |   2 | (a,INT,0,0,1)=> (b,INT,0,1,1)
 */
-programa registro6
+programa registro8
    def
       inteiro a
       inteiro b
    fimdef c
 
+   inteiro a
+   inteiro b
    registro c x
 inicio
-   leia x
-   enquanto x.a < x.b faca
-       escreva x.a 
-       x.a <- x.a + 1
-   fimenquanto
+   leia a
+   leia b
+   x.a <- a
+   x.b <- b
+   se x.a > x.b
+      entao escreva x.a 
+      senao escreva x.b
+   fimse
 fimprograma
