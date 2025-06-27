@@ -1,4 +1,4 @@
-# compiladorRegistro
+# Compilador Registro
 Projeto final da discplina de Teoria de Linguagens e Compiladores.
 ## Colaboradores 🤝
 
